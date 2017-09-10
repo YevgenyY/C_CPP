@@ -30,6 +30,11 @@ inline int prob()
 {
 	return (rand() % 100);
 }
+inline int generate_weight(int range)
+{
+	return (rand() % range);
+}
+
 /* Generate a graph with given size 
  * and density values
  */
@@ -49,12 +54,13 @@ Graph::Graph(int size=10, int density=10, int range = 10) :
 	for(int i=0; i < size; ++i)
 		for(int j=0; j < size; ++j)
 			if (i==j)
-				mGraph[i][j] = false; // no loops
+				mGraph[i][j] = 0; // no loops
 			else
 			{
 				// it is easier to use 0-100
 				// probability values than 0.0-1.0
-				mGraph[i][j] = mGraph[j][i] = (prob() < mDensity); 
+				mGraph[i][j] = mGraph[j][i] = (prob() < mDensity) ? 0 
+					: generate_weight(range); 
 			}
 }
 Graph::~Graph()
