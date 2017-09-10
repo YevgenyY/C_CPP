@@ -9,46 +9,56 @@
 
 using namespace std;
 
+template <class D, class W> // density, weight: float, int, double etc...
 class Graph
 {
 	public:
 		Graph();
 		~Graph();
-		Graph(int size, int density, int range);
+		Graph(int size, D density, W range);
 
 		void print_graph();
 
 	private:
-		int **mGraph; // int means the distance weight, 0 means - no edge
+		W **mGraph; // "W" means the distance weight, 0 means - no edge
 		const int mSize;
-		const int mDensity;
-		const int mRange;
+		const D mDensity;
+		const W mRange;
 };
 
-// generate random value in a range 0 - 100
+// generate random values for density and distanse weight
 inline int prob()
 {
 	return (rand() % 100);
 }
-inline int generate_weight(int range)
+template <class W> 
+W generate_weight(W range)
 {
-	return (rand() % range);
+	return ( rand() % range );
+}
+/* we use different method of a weight generation
+ * fo float type 
+ */
+float generate_weight(float range)
+{
+	return static_cast <float> (rand()) / static_cast <float> (range);
 }
 
-/* Generate a graph with given size 
- * and density values
+/* Generate a graph with given size, densty
+ * and weight values
  */
-Graph::Graph(int size=10, int density=10, int range = 10) :
+template <class D, class W> 
+Graph<D, W>::Graph (int size=10, D density=10, W range=10) :
 	mSize(size),
 	mDensity(density),
 	mRange(range)
 {
 	srand(time(0)); // seed rand
-	mGraph = new int*[size];
+	mGraph = new W*[size];
 
 	for(int i = 0; i < size; ++i)
 	{
-		mGraph[i] = new int[size];
+		mGraph[i] = new W[size];
 	}
 
 	for(int i=0; i < size; ++i)
@@ -63,14 +73,16 @@ Graph::Graph(int size=10, int density=10, int range = 10) :
 					: generate_weight(range); 
 			}
 }
-Graph::~Graph()
+template <class D, class W>
+Graph<D, W>::~Graph()
 {
 	for(int i = 0; i < mSize; ++i)
 	{
 		delete mGraph[i];
 	}
 }
-void Graph::print_graph()
+template <class D, class W>
+void Graph<D, W>::print_graph()
 {
 	cout << "The graph is here: " << endl;
 	for (int i=0; i < mSize; ++i)
@@ -123,7 +135,7 @@ bool is_connected(bool *graph[], int size)
 #endif
 int main( void )
 {
-	Graph myGraph = Graph(10, 40, 10);
+	Graph<int, int> myGraph = Graph<int, int>(10, 40, 10);
 	myGraph.print_graph();
 
 #if 0
