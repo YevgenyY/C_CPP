@@ -9,8 +9,21 @@
 
 using namespace std;
 
-bool **graph;
-const int size = 8;
+class Graph
+{
+	public:
+		Graph();
+		~Graph();
+		Graph(int size, int density, int range);
+
+		void print_graph();
+
+	private:
+		int **mGraph; // int means the distance weight, 0 means - no edge
+		const int mSize;
+		const int mDensity;
+		const int mRange;
+};
 
 // generate random value in a range 0 - 100
 inline int prob()
@@ -20,38 +33,49 @@ inline int prob()
 /* Generate a graph with given size 
  * and density values
  */
-void init_graph(int size=10, int probe=10, int range = 10)
+Graph::Graph(int size=10, int density=10, int range = 10) :
+	mSize(size),
+	mDensity(density),
+	mRange(range)
 {
 	srand(time(0)); // seed rand
-	graph = new bool*[size];
+	mGraph = new int*[size];
 
 	for(int i = 0; i < size; ++i)
 	{
-		graph[i] = new bool[size];
+		mGraph[i] = new int[size];
 	}
 
 	for(int i=0; i < size; ++i)
 		for(int j=0; j < size; ++j)
 			if (i==j)
-				graph[i][j] = false; // no loops
+				mGraph[i][j] = false; // no loops
 			else
 			{
 				// it is easier to use 0-100
 				// probability values than 0.0-1.0
-				graph[i][j] = graph[j][i] = (prob() < probe); 
+				mGraph[i][j] = mGraph[j][i] = (prob() < mDensity); 
 			}
 }
-void print_graph(int size)
+Graph::~Graph()
+{
+	for(int i = 0; i < mSize; ++i)
+	{
+		delete mGraph[i];
+	}
+}
+void Graph::print_graph()
 {
 	cout << "The graph is here: " << endl;
-	for (int i=0; i < size; ++i)
+	for (int i=0; i < mSize; ++i)
 	{
-		for(int j=0; j < size; ++j)
-			cout << graph[i][j] << " ";
+		for(int j=0; j < mSize; ++j)
+			cout << mGraph[i][j] << " ";
 
 		cout << endl;
 	}
 }
+#if 0
 bool is_connected(bool *graph[], int size)
 {
 	int old_size = 0, c_size = 0;
@@ -90,13 +114,15 @@ bool is_connected(bool *graph[], int size)
 	// this should be never reached
 	return true;
 }
+#endif
 int main( void )
 {
-	init_graph(size, 110);
-	print_graph(size);
+	Graph myGraph = Graph(10, 40, 10);
+	myGraph.print_graph();
 
+#if 0
 	bool isConnected = is_connected(graph, 3);
 	cout << "is connected: " << isConnected << endl;
-
+#endif
 	return 0;
 }
