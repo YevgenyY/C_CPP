@@ -1,6 +1,6 @@
-all: dijkstra
-dijkstra: dijkstra.cpp
-	g++ -g -o dijkstra dijkstra.cpp
+all: main
+main: dijkstra.cpp
+	g++ -g -o main dijkstra.cpp
 	
 clean:
-	rm dijkstra
+	rm main

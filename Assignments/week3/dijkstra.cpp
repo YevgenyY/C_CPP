@@ -12,12 +12,15 @@ using namespace std;
 bool **graph;
 const int size = 8;
 
-// generate random value in a range 1 - 100
+// generate random value in a range 0 - 100
 inline int prob()
 {
 	return (rand() % 100);
 }
-void init_graph(int size, int probe)
+/* Generate a graph with given size 
+ * and density values
+ */
+void init_graph(int size=10, int probe=10, int range = 10)
 {
 	srand(time(0)); // seed rand
 	graph = new bool*[size];
@@ -32,8 +35,11 @@ void init_graph(int size, int probe)
 			if (i==j)
 				graph[i][j] = false; // no loops
 			else
-				graph[i][j] = graph[j][i] = (prob() < probe); // it is easier to use 1-100
-														   // probability values
+			{
+				// it is easier to use 0-100
+				// probability values than 0.0-1.0
+				graph[i][j] = graph[j][i] = (prob() < probe); 
+			}
 }
 void print_graph(int size)
 {
@@ -66,7 +72,7 @@ bool is_connected(bool *graph[], int size)
 			old_size = c_size;
 			if(open[i] && (close[i]==false))
 			{
-				close[i] = true; 
+				close[i] = true;
 				c_size++;
 
 				for(int j=0; j < size; ++j)
