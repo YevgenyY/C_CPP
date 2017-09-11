@@ -9,20 +9,20 @@
 
 using namespace std;
 
-template <class D, class W> // density, weight: float, int, double etc...
+template <class W> // W-weight: float, int, double etc...
 class Graph
 {
 	public:
 		Graph();
 		~Graph();
-		Graph(int size, D density, W range);
+		Graph(int size=10, int density=10, W range=10);
 
 		void print_graph();
 
 	private:
 		W **mGraph; // "W" means the distance weight, 0 means - no edge
 		const int mSize;
-		const D mDensity;
+		const int mDensity;
 		const W mRange;
 };
 
@@ -44,11 +44,12 @@ float generate_weight(float range)
 	return static_cast <float> (rand()) / static_cast <float> (range);
 }
 
-/* Generate a graph with given size, densty
- * and weight values
+/* Constructor.
+ * Generate a graph with given size, density
+ * and distance weights values
  */
-template <class D, class W> 
-Graph<D, W>::Graph (int size=10, D density=10, W range=10) :
+template <class W> 
+Graph<W>::Graph(int size, int density, W range) :
 	mSize(size),
 	mDensity(density),
 	mRange(range)
@@ -73,16 +74,16 @@ Graph<D, W>::Graph (int size=10, D density=10, W range=10) :
 					: generate_weight(range); 
 			}
 }
-template <class D, class W>
-Graph<D, W>::~Graph()
+template <class W>
+Graph<W>::~Graph()
 {
 	for(int i = 0; i < mSize; ++i)
 	{
 		delete mGraph[i];
 	}
 }
-template <class D, class W>
-void Graph<D, W>::print_graph()
+template <class W>
+void Graph<W>::print_graph()
 {
 	cout << "The graph is here: " << endl;
 	for (int i=0; i < mSize; ++i)
@@ -135,7 +136,7 @@ bool is_connected(bool *graph[], int size)
 #endif
 int main( void )
 {
-	Graph<int, int> myGraph = Graph<int, int>(10, 40, 10);
+	Graph<int> myGraph = Graph<int>(10, 40, 10);
 	myGraph.print_graph();
 
 #if 0
