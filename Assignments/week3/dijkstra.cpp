@@ -9,6 +9,17 @@
 #include <ctime>
 
 using namespace std;
+// Auxilary class for the convenience
+class Vertex
+{
+	public:
+		Vertex(int x, int y) : x(x), y(y) {}; // constructor
+		int getx() { return x; };
+		int gety() { return y; };
+	private:
+		const int x;
+		const int y;
+};
 
 template <class W> // W-weight: float, int, double etc...
 class Graph
@@ -96,8 +107,9 @@ void Graph<W>::print_graph()
 		cout << endl;
 	}
 }
-#if 0
-bool is_connected(bool *graph[], int size)
+#if 0 
+template <class W>
+W osp_dijkstra(int x1, int y1, int x2, int y2)
 {
 	int old_size = 0, c_size = 0;
 	bool* close = new bool[size];
@@ -138,7 +150,7 @@ bool is_connected(bool *graph[], int size)
 #endif
 int main( void )
 {
-	Graph<int> myGraph = Graph<int>(10, -0.4, 10);
+	Graph<int> myGraph = Graph<int>(10, 0.4, 10);
 	myGraph.print_graph();
 
 #if 0
