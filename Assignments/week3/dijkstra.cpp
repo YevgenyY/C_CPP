@@ -4,6 +4,7 @@
 // https://ru.wikipedia.org/wiki/%D0%90%D0%BB%D0%B3%D0%BE%D1%80%D0%B8%D1%82%D0%BC_%D0%94%D0%B5%D0%B9%D0%BA%D1%81%D1%82%D1%80%D1%8B
 
 #include <iostream>
+#include <cmath>
 #include <cstdlib>
 #include <ctime>
 
@@ -15,7 +16,7 @@ class Graph
 	public:
 		Graph();
 		~Graph();
-		Graph(int size=10, int density=10, W range=10);
+		Graph(unsigned int size=10, float density=0.1, W range=10);
 
 		void print_graph();
 
@@ -49,11 +50,12 @@ float generate_weight(float range)
  * and distance weights values
  */
 template <class W> 
-Graph<W>::Graph(int size, int density, W range) :
+Graph<W>::Graph(unsigned int size, float density, W range) :
 	mSize(size),
-	mDensity(density),
+	mDensity(fabs(density)),
 	mRange(range)
 {
+	unsigned int lDensity = static_cast<unsigned int>(mDensity * 100);
 	srand(time(0)); // seed rand
 	mGraph = new W*[size];
 
@@ -70,7 +72,7 @@ Graph<W>::Graph(int size, int density, W range) :
 			{
 				// it is easier to use 0-100
 				// probability values than 0.0-1.0
-				mGraph[i][j] = mGraph[j][i] = (prob() < mDensity) ? 0 
+				mGraph[i][j] = mGraph[j][i] = (prob() < lDensity) ? 0 
 					: generate_weight(range); 
 			}
 }
@@ -136,7 +138,7 @@ bool is_connected(bool *graph[], int size)
 #endif
 int main( void )
 {
-	Graph<int> myGraph = Graph<int>(10, 40, 10);
+	Graph<int> myGraph = Graph<int>(10, -0.4, 10);
 	myGraph.print_graph();
 
 #if 0
