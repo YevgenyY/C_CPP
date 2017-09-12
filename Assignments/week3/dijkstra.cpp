@@ -123,7 +123,7 @@ void Graph<W>::print_graph()
 			cout << mGraph[i][j] << " ";
 
 		cout << endl;
-	}	
+	}
 	cout << "The osp matrix: " << endl;
 	for (int i=0; i < mSize; ++i)
 	{
@@ -138,17 +138,49 @@ void Graph<W>::print_graph()
 template <class W>
 void Graph<W>::osp_dijkstra()
 {
+	vector<int> lVertexVisited;
+	vector<int> lVertexCurrent;
+	W lCurWeight; // weight of the current vertex
+	W lNewWeight; // weight of a new edge
+
+	/* start with vertex #0 */
+	lCurWeight = 0;
+
+	for (int i=0; i < mSize; ++i)
+	{
+		for (int j=0; j < mSize; ++j)
+		{
+			if (mGraph[i][j] > 0)
+			{
+				/* collect all connected verticies */
+				lVertexCurrent.push_back(j);
+				//cout << "i=" << i <<" push_back " << j << endl;
+			}
+		}
+
+		if (!lVertexCurrent.empty())
+		{
+			vector<int>::iterator it = lVertexCurrent.begin();
+			for (; it != lVertexCurrent.end(); )
+			{
+				cout << *it << " ";
+				lVertexCurrent.erase(it);
+			}
+			cout << endl;
+		}
+	}
+
 }
 #endif
 int main( void )
 {
 	Graph<int> myGraph = Graph<int>(4, 0.5, 10);
-	myGraph.print_graph();
 
-#if 0
-	bool isConnected = is_connected(graph, 3);
-	cout << "is connected: " << isConnected << endl;
+#if 1
+	myGraph.osp_dijkstra();
 #endif
+
+	myGraph.print_graph();
 	return 0;
 }
 
