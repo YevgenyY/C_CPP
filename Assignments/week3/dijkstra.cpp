@@ -7,49 +7,57 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
+#include <vector>
 
 using namespace std;
 // Auxilary class for the convenience
 class Vertex
 {
-	public:
-		Vertex(int x, int y) : x(x), y(y) {}; // constructor
-		int getx() { return x; };
-		int gety() { return y; };
-	private:
-		const int x;
-		const int y;
+public:
+	Vertex(int x, int y) : x(x), y(y) {}; // constructor
+	int getx()
+	{
+		return x;
+	};
+	int gety()
+	{
+		return y;
+	};
+private:
+	const int x;
+	const int y;
 };
 
 template <class W> // W-weight: float, int, double etc...
 class Graph
 {
-	public:
-		Graph();
-		~Graph();
-		Graph(unsigned int size=10, float density=0.1, W range=10);
+public:
+	Graph();
+	~Graph();
+	Graph(unsigned int size=10, float density=0.1, W range=10);
 
-		void print_graph();
+	W osp_dijkstra(int x1, int y1, int x2, int y2);
+	void print_graph();
 
-	private:
-		W **mGraph; // "W" means the distance weight, 0 means - no edge
-		const int mSize;
-		const int mDensity;
-		const W mRange;
+private:
+	W **mGraph; // "W" means the distance weight, 0 means - no edge
+	const int mSize;
+	const int mDensity;
+	const W mRange;
 };
 
 // generate random values for density and distanse weight
-inline int prob()
+inline int probe()
 {
 	return (rand() % 100);
 }
-template <class W> 
+template <class W>
 W generate_weight(W range)
 {
 	return ( rand() % range );
 }
 /* we use different method of a weight generation
- * fo float type 
+ * fo float type
  */
 float generate_weight(float range)
 {
@@ -60,11 +68,11 @@ float generate_weight(float range)
  * Generate a graph with given size, density
  * and distance weights values
  */
-template <class W> 
+template <class W>
 Graph<W>::Graph(unsigned int size, float density, W range) :
 	mSize(size),
-	mDensity(fabs(density)),
-	mRange(range)
+	mDensity(abs(density)),
+	mRange(abs(range))
 {
 	unsigned int lDensity = static_cast<unsigned int>(mDensity * 100);
 	srand(time(0)); // seed rand
@@ -83,8 +91,8 @@ Graph<W>::Graph(unsigned int size, float density, W range) :
 			{
 				// it is easier to use 0-100
 				// probability values than 0.0-1.0
-				mGraph[i][j] = mGraph[j][i] = (prob() < lDensity) ? 0 
-					: generate_weight(range); 
+				mGraph[i][j] = mGraph[j][i] = (probe() < lDensity) ? 0
+				                              : generate_weight(range);
 			}
 }
 template <class W>
@@ -107,45 +115,14 @@ void Graph<W>::print_graph()
 		cout << endl;
 	}
 }
-#if 0 
+#if 1
 template <class W>
-W osp_dijkstra(int x1, int y1, int x2, int y2)
+W Graph<W>::osp_dijkstra(Vertex origin)
 {
-	int old_size = 0, c_size = 0;
-	bool* close = new bool[size];
-	bool* open = new bool[size];
-
-	// init arrays
-	for(int i=0; i < size; ++i)
-		open[i] = close[i] = false;
-
-	// init the first node
-	open[0] = true;
-
-	while(c_size < size)
-	{
-		for(int i=0; i < size; ++i)
-		{
-			old_size = c_size;
-			if(open[i] && (close[i]==false))
-			{
-				close[i] = true;
-				c_size++;
-
-				for(int j=0; j < size; ++j)
-					open[j] = open[j] || graph[i][j];
-			}
-		}
-
-		if(old_size = c_size)
-			return false;
-	}
-
-	if(c_size == size)
-		return true;
-
-	// this should be never reached
-	return true;
+	vector<Vertex> lVertexVisited; // visited vertexs
+	vector<Vertex> lVertexTesting; // ongoing vertexs
+	vector<Vertex> lMinPath;	   // min path vertexs
+	W lMinPathWeight;
 }
 #endif
 int main( void )
