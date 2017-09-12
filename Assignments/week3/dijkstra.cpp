@@ -36,7 +36,7 @@ public:
 	~Graph();
 	Graph(unsigned int size=10, float density=0.1, W range=10);
 
-	W osp_dijkstra(int x1, int y1, int x2, int y2);
+	W osp_dijkstra(Vertex origin);
 	void print_graph();
 
 private:
@@ -70,7 +70,7 @@ float generate_weight(float range)
  */
 template <class W>
 Graph<W>::Graph(unsigned int size, float density, W range) :
-	mSize(size),
+	mSize(abs(size)),
 	mDensity(abs(density)),
 	mRange(abs(range))
 {
@@ -127,7 +127,7 @@ W Graph<W>::osp_dijkstra(Vertex origin)
 #endif
 int main( void )
 {
-	Graph<int> myGraph = Graph<int>(10, 0.4, 10);
+	Graph<int> myGraph = Graph<int>(4, 0.4, 10);
 	myGraph.print_graph();
 
 #if 0
