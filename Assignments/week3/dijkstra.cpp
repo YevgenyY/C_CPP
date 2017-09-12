@@ -36,11 +36,13 @@ public:
 	~Graph();
 	Graph(unsigned int size=10, float density=0.1, W range=10);
 
-	W osp_dijkstra(Vertex origin);
+	void osp_dijkstra();
 	void print_graph();
 
 private:
-	W **mGraph; // "W" means the distance weight, 0 means - no edge
+	// "W" means the distance weight, 0 means - no edge
+	W **mGraph; 		// connectivity matrix
+	W **mOSP;		// open shortest path matrix
 	const int mSize;
 	const int mDensity;
 	const W mRange;
@@ -74,17 +76,23 @@ Graph<W>::Graph(unsigned int size, float density, W range) :
 	mDensity(abs(density)),
 	mRange(abs(range))
 {
-	unsigned int lDensity = static_cast<unsigned int>(mDensity * 100);
+	unsigned int lDensity = static_cast<unsigned int>(density * 100);
 	srand(time(0)); // seed rand
 	mGraph = new W*[size];
+	mOSP = new W*[size];
+
+	cout << "lDensity " << lDensity << endl;
 
 	for(int i = 0; i < size; ++i)
 	{
 		mGraph[i] = new W[size];
+		mOSP[i] = new W[size];
 	}
 
 	for(int i=0; i < size; ++i)
 		for(int j=0; j < size; ++j)
+		{
+			mOSP[i][j] = mOSP[j][i] = static_cast<W>INFINITY;
 			if (i==j)
 				mGraph[i][j] = 0; // no loops
 			else
@@ -94,6 +102,7 @@ Graph<W>::Graph(unsigned int size, float density, W range) :
 				mGraph[i][j] = mGraph[j][i] = (probe() < lDensity) ? 0
 				                              : generate_weight(range);
 			}
+		}
 }
 template <class W>
 Graph<W>::~Graph()
@@ -101,33 +110,39 @@ Graph<W>::~Graph()
 	for(int i = 0; i < mSize; ++i)
 	{
 		delete mGraph[i];
+		delete mOSP[i];
 	}
 }
 template <class W>
 void Graph<W>::print_graph()
 {
-	cout << "The graph is here: " << endl;
+	cout << "The connectivity matrix: " << endl;
 	for (int i=0; i < mSize; ++i)
 	{
 		for(int j=0; j < mSize; ++j)
 			cout << mGraph[i][j] << " ";
 
 		cout << endl;
+	}	
+	cout << "The osp matrix: " << endl;
+	for (int i=0; i < mSize; ++i)
+	{
+		for(int j=0; j < mSize; ++j)
+			cout << mOSP[i][j] << " ";
+
+		cout << endl;
 	}
+
 }
 #if 1
 template <class W>
-W Graph<W>::osp_dijkstra(Vertex origin)
+void Graph<W>::osp_dijkstra()
 {
-	vector<Vertex> lVertexVisited; // visited vertexs
-	vector<Vertex> lVertexTesting; // ongoing vertexs
-	vector<Vertex> lMinPath;	   // min path vertexs
-	W lMinPathWeight;
 }
 #endif
 int main( void )
 {
-	Graph<int> myGraph = Graph<int>(4, 0.4, 10);
+	Graph<int> myGraph = Graph<int>(4, 0.5, 10);
 	myGraph.print_graph();
 
 #if 0
@@ -136,3 +151,4 @@ int main( void )
 #endif
 	return 0;
 }
+
