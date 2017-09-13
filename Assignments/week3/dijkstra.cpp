@@ -36,7 +36,7 @@ public:
 	~Graph();
 	Graph(unsigned int size=10, float density=0.1, W range=10);
 
-	void osp_dijkstra();
+	void osp_dijkstra(int);
 	void print_graph();
 
 private:
@@ -135,19 +135,45 @@ void Graph<W>::print_graph()
 
 }
 #if 1
+//TODO: use a recursion
 template <class W>
-void Graph<W>::osp_dijkstra()
+void Graph<W>::osp_dijkstra(int origin)
 {
-	vector<int> lVertexVisited;
-	vector<int> lVertexCurrent;
-	W lCurWeight; // weight of the current vertex
-	W lNewWeight; // weight of a new edge
+	W weights[mSize];
+	int visited[mSize];
+	for (int i=0; i < mSize; ++i) 
+	{
+		// initialize with zero
+		weights[i] = static_cast<W> INFINITY;
+		visited[i] = 0; // initialize with not visited
+	}
+	weights[origin] = 0;
 
-	/* start with vertex #0 */
-	lCurWeight = 0;
+	/* fill in current/reachable vertexs
+	 * for vertex "i"
+	 */
+	for (int j=0; j < mSize; ++j)
+	{
+		if (mGraph[origin][j] > 0)
+		{
+			W dw = mGraph[origin][j];
+			if ( weights[origin] + dw < weights[j] )
+				weights[j] = weights[origin] + dw;
+		}
+	}
 
+	cout << "Weights are:" << endl;
+	for (int i=0; i < mSize; ++i)
+		cout << weights[i] << " ";
+	cout << endl;
+
+
+#if 0
 	for (int i=0; i < mSize; ++i)
 	{
+		/* fill in current/reachable vertexs
+		 * for vertex "i"
+		 */
 		for (int j=0; j < mSize; ++j)
 		{
 			if (mGraph[i][j] > 0)
@@ -160,16 +186,26 @@ void Graph<W>::osp_dijkstra()
 
 		if (!lVertexCurrent.empty())
 		{
+			int index;
 			vector<int>::iterator it = lVertexCurrent.begin();
 			for (; it != lVertexCurrent.end(); )
 			{
 				cout << *it << " ";
+				index = *it;
+
+				if (i == origin) // if it's origin W=0
+				{
+					mOSP[i][index] = mGraph[i][index];
+				}
+
+
+
 				lVertexCurrent.erase(it);
 			}
 			cout << endl;
 		}
 	}
-
+#endif
 }
 #endif
 int main( void )
@@ -177,7 +213,7 @@ int main( void )
 	Graph<int> myGraph = Graph<int>(4, 0.5, 10);
 
 #if 1
-	myGraph.osp_dijkstra();
+	myGraph.osp_dijkstra( 0 ); // start with vertex #0
 #endif
 
 	myGraph.print_graph();
