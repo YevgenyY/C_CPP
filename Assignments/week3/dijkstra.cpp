@@ -145,6 +145,7 @@ int Graph<W>::printSolution(int dist[], int n)
 
 
 #if 1
+//TODO: use a recursion
 template <class W>
 void Graph<W>::osp_dijkstra(int src)
 {
@@ -189,13 +190,11 @@ void Graph<W>::osp_dijkstra(int src)
 int main( void )
 {
 	Graph<int> myGraph = Graph<int>(4, 0.5, 10);
-
-	myGraph.osp_dijkstra(0);
-
-#if 0
-	bool isConnected = is_connected(graph, 3);
-	cout << "is connected: " << isConnected << endl;
+#if 1
+	myGraph.osp_dijkstra( 0 ); // start with vertex #0
 #endif
+
+	myGraph.print_graph();
 	return 0;
 }
 
