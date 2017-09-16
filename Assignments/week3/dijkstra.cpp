@@ -10,23 +10,6 @@
 #include <vector>
 
 using namespace std;
-// Auxilary class for the convenience
-class Vertex
-{
-public:
-	Vertex(int x, int y) : x(x), y(y) {}; // constructor
-	int getx()
-	{
-		return x;
-	};
-	int gety()
-	{
-		return y;
-	};
-private:
-	const int x;
-	const int y;
-};
 
 template <class W> // W-weight: float, int, double etc...
 class Graph
@@ -36,8 +19,10 @@ public:
 	~Graph();
 	Graph(unsigned int size=10, float density=0.1, W range=10);
 
-	void osp_dijkstra();
+	void osp_dijkstra(int);
 	void print_graph();
+	int minDistance(int dist[], bool sptSet[]);
+	int printSolution(int dist[], int n);
 
 private:
 	// "W" means the distance weight, 0 means - no edge
@@ -123,7 +108,7 @@ void Graph<W>::print_graph()
 			cout << mGraph[i][j] << " ";
 
 		cout << endl;
-	}	
+	}
 	cout << "The osp matrix: " << endl;
 	for (int i=0; i < mSize; ++i)
 	{
@@ -132,18 +117,80 @@ void Graph<W>::print_graph()
 
 		cout << endl;
 	}
-
 }
+// A utility function to find the vertex with minimum distance value, from
+// the set of vertices not yet included in shortest path tree
+template <class W>
+int Graph<W>::minDistance(int dist[], bool sptSet[])
+{
+	// Initialize min value
+	int min = static_cast<int>INFINITY, min_index;
+
+	for (int v = 0; v < mSize; v++)
+		if (sptSet[v] == false && dist[v] <= min)
+			min = dist[v], min_index = v;
+
+	return min_index;
+}
+
+// A utility function to print the constructed distance array
+template <class W>
+int Graph<W>::printSolution(int dist[], int n)
+{
+	cout << "Vertex   Distance from Source" << endl;
+	for (int i = 0; i < mSize; i++)
+		cout << i << "\t\t" << dist[i] << endl;
+		//printf("%d \t\t %d\n", i, dist[i]);
+}
+
+
 #if 1
 template <class W>
-void Graph<W>::osp_dijkstra()
+void Graph<W>::osp_dijkstra(int src)
 {
+	int dist[mSize];// The output array.  dist[i] will hold the shortest
+			// distance from src to i
+
+	bool sptSet[mSize];// sptSet[i] will true if vertex i is included in shortest
+			   // path tree or shortest distance from src to i is finalized
+
+	// Initialize all distances as INFINITE and stpSet[] as false
+	for (int i = 0; i < mSize; i++)
+		dist[i] = static_cast<int>INFINITY, sptSet[i] = false;
+
+	// Distance of source vertex from itself is always 0
+	dist[src] = 0;
+
+	// Find shortest path for all vertices
+	for (int count = 0; count < mSize-1; count++)
+	{
+		// Pick the minimum distance vertex from the set of vertices not
+		// yet processed. u is always equal to src in first iteration.
+		int u = minDistance(dist, sptSet);
+
+		// Mark the picked vertex as processed
+		sptSet[u] = true;
+
+		// Update dist value of the adjacent vertices of the picked vertex.
+		for (int v = 0; v < mSize; v++)
+
+			// Update dist[v] only if is not in sptSet, there is an edge from
+			// u to v, and total weight of path from src to  v through u is
+			// smaller than current value of dist[v]
+			if (!sptSet[v] && mGraph[u][v] && dist[u] != INFINITY
+			        && dist[u]+mGraph[u][v] < dist[v])
+				dist[v] = dist[u] + mGraph[u][v];
+	}
+
+	// print the constructed distance array
+	printSolution(dist, mSize);
 }
 #endif
 int main( void )
 {
 	Graph<int> myGraph = Graph<int>(4, 0.5, 10);
-	myGraph.print_graph();
+
+	myGraph.osp_dijkstra(0);
 
 #if 0
 	bool isConnected = is_connected(graph, 3);
@@ -151,4 +198,6 @@ int main( void )
 #endif
 	return 0;
 }
+
+
 
