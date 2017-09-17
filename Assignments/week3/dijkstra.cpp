@@ -19,11 +19,13 @@ public:
 	~Graph();
 	Graph(unsigned int size=10, float density=0.1, W range=10);
 
-	void osp_dijkstra(int);
-	void print_graph();
+	void ospDijkstra(int);
+	void printGraph();
+	void printSolution(W dist[], int src);
+	void saveSolution(W dist[], int src);
+
+	int getSize() { return mSize; };
 	W minDistance(W dist[], bool sptSet[]);
-	int printSolution(W dist[], int src);
-	int saveSolution(W dist[], int src);
 
 private:
 	// "W" means the distance weight, 0 means - no edge
@@ -100,7 +102,7 @@ Graph<W>::~Graph()
 	}
 }
 template <typename W>
-void Graph<W>::print_graph()
+void Graph<W>::printGraph()
 {
 	cout << "The connectivity matrix: " << endl;
 	for (int i=0; i < mSize; ++i)
@@ -136,7 +138,7 @@ W Graph<W>::minDistance(W dist[], bool sptSet[])
 
 // A utility function to print the constructed distance array
 template <typename W>
-int Graph<W>::printSolution(W dist[], int src)
+void Graph<W>::printSolution(W dist[], int src)
 {
 	cout << "Vertex Distance from Source " << src << endl;
 	cout << "vertex   "; 
@@ -151,18 +153,16 @@ int Graph<W>::printSolution(W dist[], int src)
 }
 
 template <typename W>
-int Graph<W>::saveSolution(W dist[], int src)
+void Graph<W>::saveSolution(W dist[], int src)
 {
-	cout << "Savinf OSP for vertex " << src  << endl;
+	cout << "Saving OSP for vertex " << src  << endl;
 	for (int i = 0; i < mSize; i++)
-		cout << i << "\t\t" << dist[i] << endl;
+		mOSP[src][i] = dist[i];
 }
-
-
 
 #if 1
 template <typename W>
-void Graph<W>::osp_dijkstra(int src)
+void Graph<W>::ospDijkstra(int src)
 {
 	W dist[mSize];  // The output array.  dist[i] will hold the shortest
 					// distance from src to i
@@ -207,10 +207,11 @@ int main( void )
 {
 	Graph<int> myGraph = Graph<int>(4, 0.5, 10);
 #if 1
-	myGraph.osp_dijkstra( 0 ); // start with vertex #0
+	for (int i=0; i < myGraph.getSize(); ++i)
+		myGraph.ospDijkstra( i ); // calculate all the OSPs
 #endif
 
-	myGraph.print_graph();
+	myGraph.printGraph();
 	return 0;
 }
 
