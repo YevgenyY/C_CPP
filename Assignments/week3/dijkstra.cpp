@@ -11,7 +11,7 @@
 
 using namespace std;
 
-template <class W> // W-weight: float, int, double etc...
+template <typename W> // W-weight: float, int, double etc...
 class Graph
 {
 public:
@@ -21,8 +21,9 @@ public:
 
 	void osp_dijkstra(int);
 	void print_graph();
-	int minDistance(int dist[], bool sptSet[]);
-	int printSolution(int dist[], int n);
+	W minDistance(W dist[], bool sptSet[]);
+	int printSolution(W dist[], int src);
+	int saveSolution(W dist[], int src);
 
 private:
 	// "W" means the distance weight, 0 means - no edge
@@ -38,7 +39,7 @@ inline int probe()
 {
 	return (rand() % 100);
 }
-template <class W>
+template <typename W>
 W generate_weight(W range)
 {
 	return ( rand() % range );
@@ -55,7 +56,7 @@ float generate_weight(float range)
  * Generate a graph with given size, density
  * and distance weights values
  */
-template <class W>
+template <typename W>
 Graph<W>::Graph(unsigned int size, float density, W range) :
 	mSize(abs(size)),
 	mDensity(abs(density)),
@@ -89,7 +90,7 @@ Graph<W>::Graph(unsigned int size, float density, W range) :
 			}
 		}
 }
-template <class W>
+template <typename W>
 Graph<W>::~Graph()
 {
 	for(int i = 0; i < mSize; ++i)
@@ -98,7 +99,7 @@ Graph<W>::~Graph()
 		delete mOSP[i];
 	}
 }
-template <class W>
+template <typename W>
 void Graph<W>::print_graph()
 {
 	cout << "The connectivity matrix: " << endl;
@@ -120,11 +121,11 @@ void Graph<W>::print_graph()
 }
 // A utility function to find the vertex with minimum distance value, from
 // the set of vertices not yet included in shortest path tree
-template <class W>
-int Graph<W>::minDistance(int dist[], bool sptSet[])
+template <typename W>
+W Graph<W>::minDistance(W dist[], bool sptSet[])
 {
 	// Initialize min value
-	int min = static_cast<int>INFINITY, min_index;
+	W min = static_cast<W>INFINITY, min_index;
 
 	for (int v = 0; v < mSize; v++)
 		if (sptSet[v] == false && dist[v] <= min)
@@ -134,30 +135,44 @@ int Graph<W>::minDistance(int dist[], bool sptSet[])
 }
 
 // A utility function to print the constructed distance array
-template <class W>
-int Graph<W>::printSolution(int dist[], int n)
+template <typename W>
+int Graph<W>::printSolution(W dist[], int src)
 {
-	cout << "Vertex   Distance from Source" << endl;
+	cout << "Vertex Distance from Source " << src << endl;
+	cout << "vertex   "; 
+	for (int i = 0; i < mSize; i++)
+		cout << i << "\t";
+	cout << endl;
+
+	cout << "distance ";
+	for (int i = 0; i < mSize; i++)
+		cout << dist[i] << "\t";
+	cout << endl;
+}
+
+template <typename W>
+int Graph<W>::saveSolution(W dist[], int src)
+{
+	cout << "Savinf OSP for vertex " << src  << endl;
 	for (int i = 0; i < mSize; i++)
 		cout << i << "\t\t" << dist[i] << endl;
-		//printf("%d \t\t %d\n", i, dist[i]);
 }
 
 
+
 #if 1
-//TODO: use a recursion
-template <class W>
+template <typename W>
 void Graph<W>::osp_dijkstra(int src)
 {
-	int dist[mSize];// The output array.  dist[i] will hold the shortest
-			// distance from src to i
+	W dist[mSize];  // The output array.  dist[i] will hold the shortest
+					// distance from src to i
 
 	bool sptSet[mSize];// sptSet[i] will true if vertex i is included in shortest
-			   // path tree or shortest distance from src to i is finalized
+					   // path tree or shortest distance from src to i is finalized
 
 	// Initialize all distances as INFINITE and stpSet[] as false
 	for (int i = 0; i < mSize; i++)
-		dist[i] = static_cast<int>INFINITY, sptSet[i] = false;
+		dist[i] = static_cast<W>INFINITY, sptSet[i] = false;
 
 	// Distance of source vertex from itself is always 0
 	dist[src] = 0;
@@ -167,7 +182,7 @@ void Graph<W>::osp_dijkstra(int src)
 	{
 		// Pick the minimum distance vertex from the set of vertices not
 		// yet processed. u is always equal to src in first iteration.
-		int u = minDistance(dist, sptSet);
+		W u = minDistance(dist, sptSet);
 
 		// Mark the picked vertex as processed
 		sptSet[u] = true;
@@ -184,7 +199,8 @@ void Graph<W>::osp_dijkstra(int src)
 	}
 
 	// print the constructed distance array
-	printSolution(dist, mSize);
+	printSolution(dist, src);
+	saveSolution(dist, src);
 }
 #endif
 int main( void )
