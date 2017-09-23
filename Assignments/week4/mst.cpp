@@ -349,10 +349,15 @@ void Graph<W>::mstJarnikPrim()
 	// we use vertex 0 as a starting point of MST algo	
 	for (int i=0; i < mSize; ++i)
 	{
+		// get all neighbours of vertex i
 		for (int j=0; j < mSize; ++j)
 		{
 			neighbo[j] = mGraph[i][j] != 0 ? mGraph[i][j] : 0;
-
+			if (mGraph[i][j] != 0)
+			{
+				//neighbo[j] = 
+			}
+		
 		}
 	}
 }
