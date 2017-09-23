@@ -27,11 +27,12 @@ public:
 	void ospDijkstra(int src); // src is the starting point
 	W ospAverage(const unsigned int num); // num is the number of paths which are
 	// involved in average osp calculation
-	
+
 	void mstJarnikPrim(); // Jarnik-Prim minimum spanning tree algorythm implementation
 
 	void printGraph();
 	void printSolution(W dist[], int src);
+	void printMSTSolution(); // print minimum spanning tree connectivity matrix
 	void saveSolution(W dist[], int src);
 
 	int getSize()
@@ -50,7 +51,7 @@ private:
 	W mRange;
 };
 
-// generate random values for density and distanse 
+// generate random values for density and distanse
 // weight calculations
 inline int probe()
 {
@@ -128,12 +129,12 @@ Graph<W>::Graph(unsigned int size, float density, W range) :
 			}
 			mMST[i][j] = 0; // initialize MST matrix with 0
 		}
-}	
+}
 
 // Constructor
 // build graph from a file
 template <typename W>
-Graph<W>::Graph(const char filename[]) 
+Graph<W>::Graph(const char filename[])
 {
 	ifstream graph_file(filename);
 	istream_iterator<int> start(graph_file), end;
@@ -143,7 +144,7 @@ Graph<W>::Graph(const char filename[])
 	// set Graph size
 	mSize = ints[0];
 	ints.erase(ints.begin() + 0);
-	
+
 	// print values for manual checking
 	for (auto str : ints)
 		cout << str << " ";
@@ -153,9 +154,9 @@ Graph<W>::Graph(const char filename[])
 
 	// allocate memory for the conectivity matrix
 	mGraph = new W*[mSize];
-	mOSP = new W*[mSize];	
-	mMST = new W*[mSize];	
-	
+	mOSP = new W*[mSize];
+	mMST = new W*[mSize];
+
 	// allocate conectivity matrix
 	// and open shortest path (OSP)
 	// matrix
@@ -164,7 +165,7 @@ Graph<W>::Graph(const char filename[])
 		mGraph[i] = new W[mSize];
 		mOSP[i] = new W[mSize];
 		mMST[i] = new W[mSize];
-	}	
+	}
 	// set initial zeros
 	for( int i=0; i < mSize; ++i)
 		for( int j=0; j < mSize; ++j)
@@ -174,11 +175,14 @@ Graph<W>::Graph(const char filename[])
 	// now we can read triplets: first co-ordinate, second co-ordinate and the weight
 	int x,y;
 	W w;
-	while (!ints.empty())
+	while ( !ints.empty() )
 	{
-		w = ints.back(); ints.pop_back();
-		y = ints.back(); ints.pop_back();
-		x = ints.back(); ints.pop_back();
+		w = ints.back();
+		ints.pop_back();
+		y = ints.back();
+		ints.pop_back();
+		x = ints.back();
+		ints.pop_back();
 
 		//cout << x << " " << y << " " << w << endl;
 
@@ -211,6 +215,7 @@ void Graph<W>::printGraph()
 		cout << endl;
 	}
 	cout << endl;
+	return;
 	cout << "The osp matrix (the open shortest paths weights): " << endl;
 	for (int i=0; i < mSize; ++i)
 	{
@@ -333,32 +338,100 @@ W Graph<W>::ospAverage(unsigned int num)
 		return weight/static_cast<W>(counter);
 }
 #endif
+//
+// Returns minimum weight index in vector v
+int getMinWeightIdx(int *v, int size)
+{
+	int idx = -1;
+
+	for (int i=0; i < size; ++i)
+	{
+		if (v[i] != 0 && idx == -1)
+			idx = i;
+		else if (v[i] != 0 && v[i] < v[idx])
+			idx = i;
+	}
+
+	return idx;
+}
+//
+// prints the constructed distance array
+template <typename W>
+void Graph<W>::printMSTSolution()
+{
+	cout << "The MST matrix: " << endl;
+	for (int i=0; i < mSize; ++i)
+	{
+		for(int j=0; j < mSize; ++j)
+			cout << mMST[i][j] << " ";
+
+		cout << endl;
+	}
+
+}
 
 //
 // Jarnik-Prim minimum spanning tree algorythm implementation
 template <typename W>
 void Graph<W>::mstJarnikPrim()
 {
-	vector<bool> visited(mSize); // visited vertexies
-	vector<int> neighbo(mSize); // neighbours
-	
-	// initialize visited
-	for (int i; i < mSize; ++i)
-		visited[i] = false;
+	vector<int> visited; // visited vertexies
+	vector<int> vertexies; // not visited
 
-	// we use vertex 0 as a starting point of MST algo	
+	// initialize vertexies
+	// visited.size() = 0
+	// vertexies.size() = mSize
 	for (int i=0; i < mSize; ++i)
+		vertexies.push_back(i);
+
+	// we use vertex 0 as a starting point of MST algo
+	visited.push_back(0);
+	vertexies.erase(vertexies.begin() + 0); // remove starting point
+
+	// start MST lookup
+	while( !vertexies.empty() )
 	{
-		// get all neighbours of vertex i
-		for (int j=0; j < mSize; ++j)
+		int idx = 0;
+		W minWeight = static_cast<W>INFINITY;
+		int minIdx = -1; // link from visited vertexies to unvisited vertex
+		int minIdxVisited = -1;
+		// with minimum weight
+
+		cout << "Checking visited" << endl;
+		for (int i : visited)
 		{
-			neighbo[j] = mGraph[i][j] != 0 ? mGraph[i][j] : 0;
-			if (mGraph[i][j] != 0)
+			// find vertex id with minimum link weight
+			idx = getMinWeightIdx(mGraph[i], mSize);
+			if ( idx != -1 && mGraph[i][idx] < minWeight && \
+			        !(find(visited.begin(), visited.end(), idx) != visited.end()) )
 			{
-				//neighbo[j] = 
+				minWeight = mGraph[i][idx];
+				minIdx = idx;
+				minIdxVisited = i;
 			}
-		
 		}
+
+		if (minIdx != -1)
+		{
+			mMST[minIdxVisited][minIdx] = mMST[minIdx][minIdxVisited] = mGraph[minIdxVisited][minIdx];
+			visited.push_back(minIdx);
+			// remove idx from unvisited vertexies
+			vertexies.erase(remove(vertexies.begin(), vertexies.end(), minIdx),
+			                vertexies.end());
+			cout << minIdxVisited << " " << idx << endl;
+
+			// unset all links from idx to visited vertexies
+			for ( int j : visited )
+				mGraph[minIdx][j] = mGraph[j][minIdx] = 0;
+		}
+
+		// print visited vertexies vector
+		for (int i : visited)
+			cout << i << " ";
+		cout << endl;
+		for (int i : vertexies)
+			cout << i << " ";
+		cout << endl;
 	}
 }
 int main( void )
@@ -390,6 +463,8 @@ int main( void )
 	// make a graph with it's new constructor
 	Graph<int> myGraph = Graph<int>("SampleTestData_mst_data.txt");
 	myGraph.printGraph();
+	myGraph.mstJarnikPrim();
+	myGraph.printMSTSolution();
 
 	cout << "end" << endl;
 
