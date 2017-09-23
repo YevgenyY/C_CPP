@@ -1,7 +1,12 @@
 //
 // This is an implementation of Dijkstra
 // the shortest path algorythm
-// https://ru.wikipedia.org/wiki/%D0%90%D0%BB%D0%B3%D0%BE%D1%80%D0%B8%D1%82%D0%BC_%D0%94%D0%B5%D0%B9%D0%BA%D1%81%D1%82%D1%80%D1%8B
+// and
+// Jarnik-Prm MST algorythm implementations
+// 
+// Please compile the file with the following command
+// $ g++ -std=c++11 -g -o main mst.cpp
+//
 
 #include <iostream>
 #include <iterator>
