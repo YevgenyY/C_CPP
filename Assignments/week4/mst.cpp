@@ -133,15 +133,51 @@ Graph<W>::Graph(const char filename[])
 	ifstream graph_file(filename);
 	istream_iterator<int> start(graph_file), end;
 
-	vector<int> words(start, end);
+	vector<int> ints(start, end);
 
-	for (auto str : words)
+	// set Graph size
+	mSize = ints[0];
+	ints.erase(ints.begin() + 0);
+	
+	// print values for manual checking
+	for (auto str : ints)
 		cout << str << " ";
 	cout << endl;
 
-	int size = words[0];
+	cout << endl << "Number of vertexies in a graph is: " << mSize << endl;
 
-	cout << endl << "Vertex number is: " << size << endl;
+	// allocate memory for the conectivity matrix
+	mGraph = new W*[mSize];
+	mOSP = new W*[mSize];	
+	
+	// allocate conectivity matrix
+	// and open shortest path (OSP)
+	// matrix
+	for(int i = 0; i < mSize; ++i)
+	{
+		mGraph[i] = new W[mSize];
+		mOSP[i] = new W[mSize];
+	}	
+	// set initial zeros
+	for( int i=0; i < mSize; ++i)
+		for( int j=0; j < mSize; ++j)
+			mGraph[i][j] = mOSP[i][j] = 0;
+
+
+	// now we can read triplets: first co-ordinate, second co-ordinate and the weight
+	int x,y;
+	W w;
+	while (!ints.empty())
+	{
+		w = ints.back(); ints.pop_back();
+		y = ints.back(); ints.pop_back();
+		x = ints.back(); ints.pop_back();
+
+		//cout << x << " " << y << " " << w << endl;
+
+		// set link between vertexies and it's weight
+		mGraph[x][y] = w;
+	}
 }
 // Destructor
 // frees memories
@@ -166,6 +202,7 @@ void Graph<W>::printGraph()
 
 		cout << endl;
 	}
+	cout << endl;
 	cout << "The osp matrix (the open shortest paths weights): " << endl;
 	for (int i=0; i < mSize; ++i)
 	{
@@ -315,6 +352,7 @@ int main( void )
 #if 1
 	// make a graph with it's new constructor
 	Graph<int> myGraph = Graph<int>("SampleTestData_mst_data.txt");
+	myGraph.printGraph();
 
 	cout << "end" << endl;
 
