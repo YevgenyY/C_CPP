@@ -27,6 +27,8 @@ public:
 	void ospDijkstra(int src); // src is the starting point
 	W ospAverage(const unsigned int num); // num is the number of paths which are
 	// involved in average osp calculation
+	
+	void mstJarnikPrim(); // Jarnik-Prim minimum spanning tree algorythm implementation
 
 	void printGraph();
 	void printSolution(W dist[], int src);
@@ -325,7 +327,13 @@ W Graph<W>::ospAverage(unsigned int num)
 		return weight/static_cast<W>(counter);
 }
 #endif
+//
+// Jarnik-Prim minimum spanning tree algorythm implementation
+template <typename W>
+void Graph<W>::mstJarnikPrim()
+{
 
+}
 int main( void )
 {
 	/* graph initialization constants */
@@ -335,6 +343,8 @@ int main( void )
 	const int montecarloNum = 50;
 
 #if 0
+	/* Dijkstra algorythm implementation */
+
 	// make a graph with it's constructor
 	Graph<int> myGraph = Graph<int>(size, density, range);
 
