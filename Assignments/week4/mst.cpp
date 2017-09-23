@@ -132,7 +132,7 @@ Graph<W>::Graph(unsigned int size, float density, W range) :
 }
 
 // Constructor
-// build graph from a file
+// build a graph from a file
 template <typename W>
 Graph<W>::Graph(const char filename[])
 {
@@ -144,11 +144,12 @@ Graph<W>::Graph(const char filename[])
 	// set Graph size
 	mSize = ints[0];
 	ints.erase(ints.begin() + 0);
-
+#if 0
 	// print values for manual checking
 	for (auto str : ints)
 		cout << str << " ";
 	cout << endl;
+#endif
 
 	cout << endl << "Number of vertexies in a graph is: " << mSize << endl;
 
@@ -359,7 +360,8 @@ int getMinWeightIdx(int *v, int size)
 template <typename W>
 void Graph<W>::printMSTSolution()
 {
-	cout << "The MST matrix: " << endl;
+	cout << endl;
+	cout << "The MST connectiity matrix: " << endl;
 	for (int i=0; i < mSize; ++i)
 	{
 		for(int j=0; j < mSize; ++j)
@@ -397,7 +399,7 @@ void Graph<W>::mstJarnikPrim()
 		int minIdxVisited = -1;
 		// with minimum weight
 
-		cout << "Checking visited" << endl;
+		//cout << "Lookup a link with minimal weight from visited vertexies..." << endl;
 		for (int i : visited)
 		{
 			// find vertex id with minimum link weight
@@ -418,13 +420,13 @@ void Graph<W>::mstJarnikPrim()
 			// remove idx from unvisited vertexies
 			vertexies.erase(remove(vertexies.begin(), vertexies.end(), minIdx),
 			                vertexies.end());
-			cout << minIdxVisited << " " << idx << endl;
+			cout << "Add link: " << minIdxVisited << "->" << minIdx << " " << minWeight << endl;
 
 			// unset all links from idx to visited vertexies
 			for ( int j : visited )
 				mGraph[minIdx][j] = mGraph[j][minIdx] = 0;
 		}
-
+#if 0
 		// print visited vertexies vector
 		for (int i : visited)
 			cout << i << " ";
@@ -432,6 +434,7 @@ void Graph<W>::mstJarnikPrim()
 		for (int i : vertexies)
 			cout << i << " ";
 		cout << endl;
+#endif
 	}
 }
 int main( void )
