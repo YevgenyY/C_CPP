@@ -44,6 +44,7 @@ private:
 	// "W" means the distance weight, 0 means - no edge
 	W **mGraph;		// connectivity matrix
 	W **mOSP;		// open shortest path matrix
+	W **mMST;		// minimum spanning tree matrix
 	int mSize;
 	int mDensity;
 	W mRange;
@@ -108,6 +109,7 @@ Graph<W>::Graph(unsigned int size, float density, W range) :
 	{
 		mGraph[i] = new W[size];
 		mOSP[i] = new W[size];
+		mMST[i] = new W[size];
 	}
 
 	for(int i=0; i < size; ++i)
@@ -124,6 +126,7 @@ Graph<W>::Graph(unsigned int size, float density, W range) :
 				mGraph[i][j] = mGraph[j][i] = (probe() > lDensity) ? 0
 				                              : generate_weight(range);
 			}
+			mMST[i][j] = 0; // initialize MST matrix with 0
 		}
 }	
 
@@ -151,6 +154,7 @@ Graph<W>::Graph(const char filename[])
 	// allocate memory for the conectivity matrix
 	mGraph = new W*[mSize];
 	mOSP = new W*[mSize];	
+	mMST = new W*[mSize];	
 	
 	// allocate conectivity matrix
 	// and open shortest path (OSP)
@@ -159,11 +163,12 @@ Graph<W>::Graph(const char filename[])
 	{
 		mGraph[i] = new W[mSize];
 		mOSP[i] = new W[mSize];
+		mMST[i] = new W[mSize];
 	}	
 	// set initial zeros
 	for( int i=0; i < mSize; ++i)
 		for( int j=0; j < mSize; ++j)
-			mGraph[i][j] = mOSP[i][j] = 0;
+			mGraph[i][j] = mOSP[i][j] = mMST[i][j] = 0;
 
 
 	// now we can read triplets: first co-ordinate, second co-ordinate and the weight
@@ -190,6 +195,7 @@ Graph<W>::~Graph()
 	{
 		delete mGraph[i];
 		delete mOSP[i];
+		delete mMST[i];
 	}
 }
 // Prints connectivity and OSP matrixies
@@ -327,12 +333,28 @@ W Graph<W>::ospAverage(unsigned int num)
 		return weight/static_cast<W>(counter);
 }
 #endif
+
 //
 // Jarnik-Prim minimum spanning tree algorythm implementation
 template <typename W>
 void Graph<W>::mstJarnikPrim()
 {
+	vector<bool> visited(mSize); // visited vertexies
+	vector<int> neighbo(mSize); // neighbours
+	
+	// initialize visited
+	for (int i; i < mSize; ++i)
+		visited[i] = false;
 
+	// we use vertex 0 as a starting point of MST algo	
+	for (int i=0; i < mSize; ++i)
+	{
+		for (int j=0; j < mSize; ++j)
+		{
+			neighbo[j] = mGraph[i][j] != 0 ? mGraph[i][j] : 0;
+
+		}
+	}
 }
 int main( void )
 {
