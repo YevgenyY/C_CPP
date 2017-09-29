@@ -122,7 +122,7 @@ Graph<W>::Graph(unsigned int size, float density, W range) :
 		for(int j=0; j < size; ++j)
 		{
 			// fill in OSP matrix with INFINITY weights
-			mOSP[i][j] = mOSP[j][i] = static_cast<W>INFINITY;
+			mOSP[i][j] = mOSP[j][i] = static_cast<W>(INFINITY);
 			if (i==j)
 				mGraph[i][j] = 0; // no loops
 			else
@@ -237,7 +237,7 @@ template <typename W>
 W Graph<W>::minDistance(W dist[], bool sptSet[])
 {
 	// Initialize min value
-	W min = static_cast<W>INFINITY, min_index;
+	W min = static_cast<W>(INFINITY), min_index;
 
 	for (int v = 0; v < mSize; v++)
 		if (sptSet[v] == false && dist[v] <= min)
@@ -268,7 +268,7 @@ void Graph<W>::saveSolution(W dist[], int src)
 	// cout << "Saving OSP for vertex " << src  << endl;
 	// use 0 instead of INFINITY for marking "no path"
 	for (int i = 0; i < mSize; i++)
-		mOSP[src][i] = (dist[i] == static_cast<W>INFINITY) ? 0 : dist[i];
+		mOSP[src][i] = (dist[i] == static_cast<W>(INFINITY)) ? 0 : dist[i];
 }
 // Dijkstra algorythm implementation
 #if 1
@@ -283,7 +283,7 @@ void Graph<W>::ospDijkstra(int src)
 
 	// Initialize all distances as INFINITE and stpSet[] as false
 	for (int i = 0; i < mSize; ++i)
-		dist[i] = static_cast<W>INFINITY, sptSet[i] = false;
+		dist[i] = static_cast<W>(INFINITY), sptSet[i] = false;
 
 	// Distance of source vertex from itself is always 0
 	dist[src] = 0;
@@ -304,7 +304,7 @@ void Graph<W>::ospDijkstra(int src)
 			// Update dist[v] only if is not in sptSet, there is an edge from
 			// u to v, and total weight of path from src to  v through u is
 			// smaller than current value of dist[v]
-			if (!sptSet[v] && mGraph[u][v] && dist[u] != static_cast<W>INFINITY
+			if (!sptSet[v] && mGraph[u][v] && dist[u] != static_cast<W>(INFINITY)
 			        && dist[u]+mGraph[u][v] < dist[v])
 				dist[v] = dist[u] + mGraph[u][v];
 	}
